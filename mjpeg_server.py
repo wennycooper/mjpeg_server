@@ -2,10 +2,11 @@
 
 #MJPEG Server for the webcam
 
-import string,cgi,time
+import string, cgi, time
 from os import curdir, sep
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
+import threading
 import cv2
 import re
 import sys
@@ -34,6 +35,11 @@ class MyHandler(BaseHTTPRequestHandler):
         try:
             self.path=re.sub('[^.a-zA-Z0-9]', "",str(self.path))
             if self.path=="" or self.path==None or self.path[:1]==".":
+                self.send_response(200)
+                self.end_headers()
+                message =  threading.currentThread().getName()
+                self.wfile.write(message)
+                self.wfile.write('\n')
                 return
             if self.path.endswith(".html"):
                 f = open(curdir + sep + self.path)
@@ -108,6 +114,7 @@ def main():
         except KeyboardInterrupt:
             print '^C received, shutting down server'
             server.socket.close()
+            return
 
 if __name__ == '__main__':
     main()

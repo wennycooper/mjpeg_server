@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#MJPEG Server for the webcam
+#MJPEG Server for the video file
 
 import string, cgi, time
 from os import curdir, sep
@@ -14,12 +14,6 @@ import sys
 import numpy as np
 import socket
 
-capture = cv2.VideoCapture('sample_video.mp4')
-ret, img1 = capture.read()
-
-if ret == False :
-    print "No video Found!"
-    sys.exit()
 
 if len(sys.argv) < 2 :
     print "Usage : webcamserver <quality> <port>"
@@ -50,6 +44,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 f.close()
                 return
             if self.path.endswith(".mjpeg"):
+                capture = cv2.VideoCapture('sample_video.mp4')
                 self.send_response(200)
                 self.wfile.write("Content-Type: multipart/x-mixed-replace; boundary=--aaboundary")
                 self.wfile.write("\r\n\r\n")
@@ -101,8 +96,6 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 #class ThreadedHTTPServer(HTTPServer):
     """Handle requests in a separate thread."""
 
-#myname = socket.getfqdn(socket.gethostname())
-#myaddr = socket.gethostbyname(myname)
 
 def main():
     while 1:
